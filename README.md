@@ -1,6 +1,8 @@
 # Amazon clone
 
-#### Tailwindcss, React.JS, Next.JS
+#### Tailwindcss, React.JS, Redux, Next.JS,
+
+#### NextAuth authentication, Spire payments, Firebase db
 
 ## to run:
 

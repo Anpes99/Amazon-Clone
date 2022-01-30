@@ -3,13 +3,39 @@ import Image from "next/dist/client/image";
 import { useSelector } from "react-redux";
 import CheckoutProduct from "../components/CheckoutProduct";
 import { useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
+
 import { selectTotal } from "../slices/basketSlice";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+
+const stripePromise = loadStripe(process.env.stripe_public_key); // from env.local   to next.config.js   env variables
 
 const Checkout = () => {
   const items = useSelector((state) => state.basket.items);
   const session = useSession();
   const total = useSelector(selectTotal);
+  const createCheckoutSession = async () => {
+    console.log("@@@@");
+    const stripe = await stripePromise;
+    console.log("@@@@", session);
 
+    // call the backend to create a checkout session
+    const checkoutSession = await axios.post("api/create-checkout-session", {
+      items: items,
+      email: session.data.user.email,
+    });
+    console.log("@@@@");
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: checkoutSession.data.id,
+    });
+    console.log("@@@@");
+
+    if (result.error) {
+      alert(result.error.message);
+    }
+  };
   return (
     <div className="bg-gray-100">
       <Header />
@@ -68,6 +94,8 @@ const Checkout = () => {
               </h2>
 
               <button
+                onClick={createCheckoutSession}
+                role="link"
                 disabled={!session.data}
                 className={`button mt-2  ${
                   !session.data &&
@@ -85,3 +113,13 @@ const Checkout = () => {
 };
 
 export default Checkout;
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
+}
