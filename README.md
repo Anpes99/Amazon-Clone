@@ -5,8 +5,8 @@ https://rocky-headland-62932.herokuapp.com/
 
 #### NextAuth authentication, Spire payments, Firebase db
 
-## to run:
+## Run commands:
 
-1. "npm install" in root directory
-2. "npm run dev"
-3. open http://localhost:3000
+#### "npm install" in root directory
+#### "npm run dev"
+#### open http://localhost:3000
